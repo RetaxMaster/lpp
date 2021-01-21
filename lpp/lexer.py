@@ -147,7 +147,7 @@ class Lexer:
         if self._read_position >= len(self._source):
             return ""
         
-        return self._source[self._read_position] if skip == 1 else self._source[self._read_position + 1] 
+        return self._source[self._read_position] if skip == 1 else self._source[self._read_position + (skip - 1)] 
 
     
     def _read_character(self) -> None:
