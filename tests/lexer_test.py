@@ -114,7 +114,40 @@ class LexerTest(TestCase):
 
 
     def test_function_declaration(self) -> None:
-        pass
+        
+        source: str = """
+            variable suma = funcion(x, y) {
+                x + y;
+            };
+        """
+        lexer: Lexer = Lexer(source)
+
+        tokens: List[Token] = []
+
+        for i in range(16):
+
+            tokens.append(lexer.next_token())
+
+        expected_tokens: List[Token] = [
+            Token(TokenType.LET, "variable"),
+            Token(TokenType.IDENT, "suma"),
+            Token(TokenType.ASSIGN, "="),
+            Token(TokenType.FUNCTION, "funcion"),
+            Token(TokenType.LPAREN, "("),
+            Token(TokenType.IDENT, "x"),
+            Token(TokenType.COMMA, ","),
+            Token(TokenType.IDENT, "y"),
+            Token(TokenType.RPAREN, ")"),
+            Token(TokenType.LBRACE, "{"),
+            Token(TokenType.IDENT, "x"),
+            Token(TokenType.PLUS, "+"),
+            Token(TokenType.IDENT, "y"),
+            Token(TokenType.SEMICOLON, ";"),
+            Token(TokenType.RBRACE, "}"),
+            Token(TokenType.SEMICOLON, ";"),
+        ]
+
+        self.assertEquals(tokens, expected_tokens)
 
 
     def test_function_call(self) -> None:
