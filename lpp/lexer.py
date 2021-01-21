@@ -166,8 +166,10 @@ class Lexer:
 
         initial_position = self._position
 
-        while self._is_letter(self._character):
-            self._read_character()
+        if self._is_letter(self._character):
+
+            while self._is_letter(self._character) or self._is_number(self._character):
+                self._read_character()
 
         return self._source[initial_position:self._position]
 
