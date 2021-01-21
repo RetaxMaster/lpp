@@ -14,6 +14,7 @@ class TokenType(Enum):
 
     ASSIGN = auto()
     COMMA = auto()
+    DIFF = auto()
     DIVISION = auto()
     ELSE = auto() # Condicional else
     EOF = auto() # Enf Of File
@@ -38,6 +39,7 @@ class TokenType(Enum):
     RETURN = auto()
     RPAREN = auto() # Paréntesis drecho )
     SEMICOLON = auto() # Punto y coma
+    SIMILAR = auto() # Triple igualdad (===)
     TRUE = auto()
 
 

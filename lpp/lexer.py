@@ -26,7 +26,13 @@ class Lexer:
         if match(r"^=$", self._character):
             
             if self._peek_character() == "=":
-                token = self._make_two_character_token(TokenType.EQ)
+
+                if self._peek_character(2) == "=":
+                    token = self._make_three_character_token(TokenType.SIMILAR)
+                        
+                else:
+                    token = self._make_two_character_token(TokenType.EQ)
+
             else:
                 token = Token(TokenType.ASSIGN, self._character)
 
@@ -72,7 +78,13 @@ class Lexer:
         elif match(r"^!$", self._character):
 
             if self._peek_character() == "=":
-                token = self._make_two_character_token(TokenType.NOT_EQ)
+
+                if self._peek_character(2) == "=":
+                    token = self._make_three_character_token(TokenType.DIFF)
+                    
+                else:
+                    token = self._make_two_character_token(TokenType.NOT_EQ)
+
             else:
                 token = Token(TokenType.NEGATION, self._character)
 
@@ -110,6 +122,17 @@ class Lexer:
         return bool(match(r"^\d$", character))
 
 
+    def _make_three_character_token(self, token_type: TokenType) -> Token:
+
+        first = self._character
+        self._read_character()
+        second = self._character
+        self._read_character()
+        third = self._character
+
+        return Token(token_type, f"{first}{second}{third}")
+
+
     def _make_two_character_token(self, token_type: TokenType) -> Token:
 
         prefix = self._character
@@ -119,12 +142,12 @@ class Lexer:
         return Token(token_type, f"{prefix}{suffix}")
 
 
-    def _peek_character(self) -> str:
+    def _peek_character(self, skip = 1) -> str:
 
         if self._read_position >= len(self._source):
             return ""
         
-        return self._source[self._read_position]
+        return self._source[self._read_position] if skip == 1 else self._source[self._read_position + 1] 
 
     
     def _read_character(self) -> None:
