@@ -4,8 +4,10 @@ from enum import (
     unique,
 )
 
-from typing import NamedTuple
-
+from typing import (
+    Dict,
+    NamedTuple
+)
 
 @unique
 class TokenType(Enum):
@@ -33,3 +35,14 @@ class Token(NamedTuple):
 
     def __str__(self) -> str:
             return f"Type {self.token_type}, Literal: {self.literal}"
+
+
+def lookup_token_type(literal: str) -> TokenType:
+    
+    # Una variable keyword que es un diccionario que tiene como llaves strngs y como valores TokenType
+    keywords: Dict[str, TokenType] = {
+        "variable": TokenType.LET
+    }
+
+    # Miramos si es una palabra reservada de nuestro lenguaje, si no lo es, entonces es un identificadir (un nombre de variable p.ej)
+    return keywords.get(literal, TokenType.IDENT)
