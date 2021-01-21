@@ -14,10 +14,12 @@ class TokenType(Enum):
 
     ASSIGN = auto()
     COMMA = auto()
+    DIVISION = auto()
     ELSE = auto() # Condicional else
     EOF = auto() # Enf Of File
     FALSE = auto()
     FUNCTION = auto()
+    GT = auto() # Gretater Than (>)
     IDENT = auto() # Identificador
     IF = auto() # Condicional if
     ILLEGAL = auto() # Cuando un caracter no pertenece al lenguaje
@@ -26,6 +28,9 @@ class TokenType(Enum):
     LET = auto() # Definición de variables
     LPAREN = auto() # Paréntesis izquierdo (
     LT = auto() # Less Than (<)
+    MINUS = auto() # Resta
+    MULTIPLICATION = auto()
+    NEGATION = auto() # Negación (!)
     PLUS = auto() # Suma
     RBRACE = auto() # Llave derecha 
     RETURN = auto()
