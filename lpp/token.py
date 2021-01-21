@@ -17,6 +17,7 @@ class TokenType(Enum):
     DIVISION = auto()
     ELSE = auto() # Condicional else
     EOF = auto() # Enf Of File
+    EQ = auto() # Igualdad (==)
     FALSE = auto()
     FUNCTION = auto()
     GT = auto() # Gretater Than (>)
@@ -31,6 +32,7 @@ class TokenType(Enum):
     MINUS = auto() # Resta
     MULTIPLICATION = auto()
     NEGATION = auto() # Negación (!)
+    NOT_EQ = auto() # Desigualdad (!=)
     PLUS = auto() # Suma
     RBRACE = auto() # Llave derecha 
     RETURN = auto()
