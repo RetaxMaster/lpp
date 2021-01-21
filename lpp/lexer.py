@@ -47,6 +47,9 @@ class Lexer:
         elif match(r"^;$", self._character):
             token = Token(TokenType.SEMICOLON, self._character)
 
+        elif match(r"^<$", self._character):
+            token = Token(TokenType.LT, self._character)
+
         elif self._is_letter(self._character):
 
             literal = self._read_identifier() # Nombre del token
