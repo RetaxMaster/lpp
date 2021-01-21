@@ -1,3 +1,5 @@
+from re import match
+
 from lpp.token import (
     Token,
     TokenType
@@ -18,7 +20,17 @@ class Lexer:
 
     def next_token(self) -> Token:
         
-        token = Token(TokenType.ILLEGAL, self._character)
+        if match(r"^=$", self._character):
+            token = Token(TokenType.ASSIGN, self._character)
+
+        elif match(r"^\+$", self._character):
+            token = Token(TokenType.PLUS, self._character)
+
+        elif match(r"^$", self._character):
+            token = Token(TokenType.EOF, self._character)
+
+        else:
+            token = Token(TokenType.ILLEGAL, self._character)
 
         self._read_character()
 
