@@ -11,6 +11,7 @@ from lpp.ast import (
     Expression,
     ExpressionStatement,
     Identifier,
+    Integer,
     LetStatement,
     Program,
     ReturnStatement
@@ -113,12 +114,26 @@ class ParserTest(TestCase):
         program: Program = parser.parse_program()
 
         self._test_program_statements(parser, program)
-
         expression_statement = cast(ExpressionStatement, program.statements[0])
-
         assert expression_statement.expression is not None
 
         self._test_literal_expression(expression_statement.expression, "foobar")
+
+
+    def test_integer_expressions(self) -> None:
+
+        source: str = "5;"
+
+        lexer: Lexer = Lexer(source)
+        parser: Parser = Parser(lexer)
+
+        program: Program = parser.parse_program()
+
+        self._test_program_statements(parser, program)
+        expression_statement = cast(ExpressionStatement, program.statements[0])
+        assert expression_statement.expression is not None
+
+        self._test_literal_expression(expression_statement.expression, 5)
 
 
     def _test_program_statements(self,
@@ -140,6 +155,9 @@ class ParserTest(TestCase):
         if value_type == str:
             self._test_identifier(expression, expected_value)
 
+        elif value_type == int:
+            self._test_integer(expression, expected_value)
+
         else:
             self.fail(f"Undefined type of expression. Got={value_type}")
 
@@ -153,3 +171,14 @@ class ParserTest(TestCase):
         identifier = cast(Identifier, expression)
         self.assertEquals(identifier.value, expected_value)
         self.assertEquals(identifier.token.literal, expected_value)
+
+
+    def _test_integer(self, 
+                        expression: Expression,
+                        expected_value: int) -> None:
+
+        self.assertIsInstance(expression, Integer)
+        
+        integer = cast(Integer, expression)
+        self.assertEquals(integer.value, expected_value)
+        self.assertEquals(integer.token.literal, str(expected_value))
