@@ -63,3 +63,15 @@ class ParserTest(TestCase):
         self.assertEqual(cast(Identifier, cast(LetStatement, program.statements[0]).name).value, "x")
         self.assertEqual(cast(Identifier, cast(LetStatement, program.statements[1]).name).value, "y")
         self.assertEqual(cast(Identifier, cast(LetStatement, program.statements[2]).name).value, "foo")
+
+
+    def test_parse_errors(self) -> None:
+
+        source: str = "variable x 5;"
+
+        lexer: Lexer = Lexer(source)
+        parser: Parser = Parser(lexer)
+
+        program: Program = parser.parse_program()
+
+        self.assertEquals(len(parser.errors), 1)

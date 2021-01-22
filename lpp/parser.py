@@ -1,4 +1,7 @@
-from typing import Optional
+from typing import (
+    List,
+    Optional
+)
 
 from lpp.ast import (
     Identifier,
@@ -20,10 +23,16 @@ class Parser:
         self._lexer = lexer
         self._current_token: Optional[Token] = None
         self._peek_token: Optional[Token] = None
+        self._errors: List[str] = []
 
         # Se llama dos veces porque al inicio _peek_token es None, así que al llamarlo de nuevo, _peek_token pasa a ser un nuevo token y _current_token es el _peek_token de la primera llamada
         self._advance_tokens()
         self._advance_tokens()
+
+
+    @property
+    def errors(self) -> List[str]:
+        return self._errors
 
 
     def parse_program(self) -> Program:
@@ -58,7 +67,17 @@ class Parser:
             self._advance_tokens()
             return True
 
+        self._expected_token_error(token_type)
         return False
+
+
+    def _expected_token_error(self, token_type: TokenType) -> None:
+
+        assert self._peek_token is not None
+        error = f"Se esperaba que el siguiente token fuera {token_type} " + \
+                f"pero se obtuvo {self._peek_token.token_type}"
+
+        self._errors.append(error)
 
 
     def _parse_let_statement(self) -> Optional[LetStatement]:
