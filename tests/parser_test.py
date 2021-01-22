@@ -1,6 +1,11 @@
 from unittest import TestCase
 
+from typing import (
+    cast
+)
+
 from lpp.ast import (
+    Identifier,
     LetStatement,
     Program,
 )
@@ -55,4 +60,6 @@ class ParserTest(TestCase):
 
         program: Program = parser.parse_program()
 
-        print(program.statements[0].token_literal())
+        self.assertEqual(cast(Identifier, cast(LetStatement, program.statements[0]).name).value, "x")
+        self.assertEqual(cast(Identifier, cast(LetStatement, program.statements[1]).name).value, "y")
+        self.assertEqual(cast(Identifier, cast(LetStatement, program.statements[2]).name).value, "foo")
