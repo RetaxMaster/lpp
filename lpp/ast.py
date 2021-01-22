@@ -125,7 +125,7 @@ class ExpressionStatement(Statement):
 
 
     def __str__(self) -> str:
-        return str(self.expression)
+        return f"{str(self.expression)};"
 
 
 class Integer(Expression):
