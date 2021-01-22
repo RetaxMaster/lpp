@@ -1,9 +1,12 @@
 from typing import (
+    Callable,
+    Dict,
     List,
     Optional
 )
 
 from lpp.ast import (
+    Expression,
     Identifier,
     LetStatement,
     Program,
@@ -16,6 +19,12 @@ from lpp.token import (
     TokenType
 )
 
+# Alias de tipos, para no tener que escribirlos todos directamente en los métodos y que se vea feo
+PrefixParseFn = Callable[[], Optional[Expression]]
+InfixParseFn = Callable[[Expression], Optional[Expression]]
+PrefixParseFns = Dict[TokenType, PrefixParseFn]
+InfixParseFns = Dict[TokenType, InfixParseFn]
+
 
 class Parser:
 
@@ -25,6 +34,9 @@ class Parser:
         self._current_token: Optional[Token] = None
         self._peek_token: Optional[Token] = None
         self._errors: List[str] = []
+
+        self._prefix_parse_fns: PrefixParseFns = self._register_prefix_fns()
+        self._infi_parse_fns: InfixParseFns = self._register_infix_fns()
 
         # Se llama dos veces porque al inicio _peek_token es None, así que al llamarlo de nuevo, _peek_token pasa a ser un nuevo token y _current_token es el _peek_token de la primera llamada
         self._advance_tokens()
@@ -130,3 +142,13 @@ class Parser:
 
         else:
             return None
+
+
+    def _register_infix_fns(self) -> InfixParseFns:
+
+        return {}
+
+    
+    def _register_prefix_fns(self) -> PrefixParseFns:
+
+        return {}
