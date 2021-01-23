@@ -125,7 +125,7 @@ class ExpressionStatement(Statement):
 
 
     def __str__(self) -> str:
-        return f"{str(self.expression)};"
+        return str(self.expression)
 
 
 class Integer(Expression):
@@ -187,4 +187,4 @@ class Boolean(Expression):
 
 
     def __str__(self) -> str:
-        return f"{self.token_literal()};"
+        return self.token_literal()

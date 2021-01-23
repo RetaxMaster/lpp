@@ -142,17 +142,17 @@ class ParserTest(TestCase):
 
     def test_prefix_expression(self) -> None:
         
-        source: str = "!5; -15;"
+        source: str = "!5; -15; -verdadero; -falso"
 
         lexer: Lexer = Lexer(source)
         parser: Parser = Parser(lexer)
 
         program: Program = parser.parse_program()
 
-        self._test_program_statements(parser, program, expected_statement_count=2)
+        self._test_program_statements(parser, program, expected_statement_count=4)
 
         for statement, (expected_operator, expected_value) in zip(
-            program.statements, [("!", 5), ("-", 15)]):
+            program.statements, [("!", 5), ("-", 15), ("-", True), ("-", False)]):
 
             statement = cast(ExpressionStatement, statement)
             self.assertIsInstance(statement.expression, Prefix)
@@ -177,6 +177,10 @@ class ParserTest(TestCase):
             5 === 5;
             5 != 5;
             5 !== 5;
+            verdadero == verdadero
+            verdadero === verdadero
+            falso != falso
+            falso !== falso
         """
 
         lexer: Lexer = Lexer(source)
@@ -184,7 +188,7 @@ class ParserTest(TestCase):
 
         program: Program = parser.parse_program()
 
-        self._test_program_statements(parser, program, expected_statement_count=10)
+        self._test_program_statements(parser, program, expected_statement_count=14)
 
         expected_operators_and_values: List[Tuple[Any, str, Any]] = [
             (5, "+", 5),
@@ -197,6 +201,10 @@ class ParserTest(TestCase):
             (5, "===", 5),
             (5, "!=", 5),
             (5, "!==", 5),
+            (True, "==", True),
+            (True, "===", True),
+            (False, "!=", False),
+            (False, "!==", False),
         ]
 
         for statement, (expected_left, expected_operator, expected_right) in zip(
@@ -234,6 +242,41 @@ class ParserTest(TestCase):
             assert expression_statement.expression is not None
 
             self._test_literal_expression(expression_statement.expression, expected_value)
+
+
+    def test_operator_precedence(self) -> None:
+
+        # El primer string representa el programa inicial
+        # El segundo string representa cuál debería ser el órden de precedencia
+        # El tercer int representa cuántos statements esperamos que tenga el programa
+        test_sources: List[Tuple[str, str, int]] = [
+            ('-a * b;', '((-a) * b)', 1),
+            ('!-a;', '(!(-a))', 1),
+            ('a + b + c;', '((a + b) + c)', 1),
+            ('a + b - c;', '((a + b) - c)', 1),
+            ('a * b * c;', '((a * b) * c)', 1),
+            ('a * b / c;', '((a * b) / c)', 1),
+            ('a + b / c;', '(a + (b / c))', 1),
+            ('a + b * c + d / e - f;', '(((a + (b * c)) + (d / e)) - f)', 1),
+            ('3 + 4; -5 * 5;', '(3 + 4)((-5) * 5)', 2),
+            ('5 > 4 == 3 < 4;', '((5 > 4) == (3 < 4))', 1),
+            ('5 < 4 != 3 > 4;', '((5 < 4) != (3 > 4))', 1),
+            ('3 + 4 * 5 == 3 * 1 + 4 * 5;', '((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))', 1),
+            ('verdadero;', 'verdadero', 1),
+            ('falso;', 'falso', 1),
+            ('3 > 5 == verdadero;', '((3 > 5) == verdadero)', 1),
+            ('3 < 5 == falso;', '((3 < 5) == falso)', 1),
+        ]
+
+        for source, expected_result, expected_statement_count in test_sources:
+
+            lexer: Lexer = Lexer(source)
+            parser: Parser = Parser(lexer)
+
+            program: Program = parser.parse_program()
+            
+            self._test_program_statements(parser, program, expected_statement_count)
+            self.assertEquals(str(program), expected_result)
 
 
     def _test_boolean(self, 

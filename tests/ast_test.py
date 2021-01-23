@@ -92,4 +92,4 @@ class ASTTest(TestCase):
         ])
 
         program_str = str(program)
-        self.assertEquals(program_str, "foobar;5;")
+        self.assertEquals(program_str, "foobar5")
