@@ -57,9 +57,6 @@ class Lexer:
         elif match(r"^;$", self._character):
             token = Token(TokenType.SEMICOLON, self._character)
 
-        elif match(r"^<$", self._character):
-            token = Token(TokenType.LT, self._character)
-
         elif match(r"^-$", self._character):
             token = Token(TokenType.MINUS, self._character)
 
@@ -70,10 +67,20 @@ class Lexer:
             token = Token(TokenType.MULTIPLICATION, self._character)
 
         elif match(r"^<$", self._character):
-            token = Token(TokenType.LT, self._character)
+
+            if self._peek_character() == "=":
+                token = self._make_two_character_token(TokenType.LE)
+
+            else:
+                token = Token(TokenType.LT, self._character)
 
         elif match(r"^>$", self._character):
-            token = Token(TokenType.GT, self._character)
+
+            if self._peek_character() == "=":
+                token = self._make_two_character_token(TokenType.GE)
+
+            else:
+                token = Token(TokenType.GT, self._character)
 
         elif match(r"^!$", self._character):
 

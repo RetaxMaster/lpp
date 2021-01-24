@@ -214,6 +214,8 @@ class ParserTest(TestCase):
             5 / 5;
             5 > 5;
             5 < 5;
+            5 >= 5;
+            5 <= 5;
             5 == 5;
             5 === 5;
             5 != 5;
@@ -229,7 +231,7 @@ class ParserTest(TestCase):
 
         program: Program = parser.parse_program()
 
-        self._test_program_statements(parser, program, expected_statement_count=14)
+        self._test_program_statements(parser, program, expected_statement_count=16)
 
         expected_operators_and_values: List[Tuple[Any, str, Any]] = [
             (5, "+", 5),
@@ -238,6 +240,8 @@ class ParserTest(TestCase):
             (5, "/", 5),
             (5, ">", 5),
             (5, "<", 5),
+            (5, ">=", 5),
+            (5, "<=", 5),
             (5, "==", 5),
             (5, "===", 5),
             (5, "!=", 5),

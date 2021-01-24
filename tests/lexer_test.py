@@ -233,13 +233,15 @@ class LexerTest(TestCase):
         source: str = """
             10 == 10;
             10 != 9;
+            10 <= 9;
+            10 >= 9;
         """
 
         lexer: Lexer = Lexer(source)
 
         tokens: List[Token] = []
 
-        for i in range(8):
+        for i in range(16):
 
             tokens.append(lexer.next_token())
 
@@ -248,8 +250,19 @@ class LexerTest(TestCase):
             Token(TokenType.EQ, "=="),
             Token(TokenType.INT, "10"),
             Token(TokenType.SEMICOLON, ";"),
+
             Token(TokenType.INT, "10"),
             Token(TokenType.NOT_EQ, "!="),
+            Token(TokenType.INT, "9"),
+            Token(TokenType.SEMICOLON, ";"),
+
+            Token(TokenType.INT, "10"),
+            Token(TokenType.LE, "<="),
+            Token(TokenType.INT, "9"),
+            Token(TokenType.SEMICOLON, ";"),
+
+            Token(TokenType.INT, "10"),
+            Token(TokenType.GE, ">="),
             Token(TokenType.INT, "9"),
             Token(TokenType.SEMICOLON, ";"),
         ]

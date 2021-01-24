@@ -154,6 +154,12 @@ def _evaluate_integer_infix_expression(operator: str,
     elif operator == ">":
         return _to_boolean_object(left_value > right_value)
 
+    elif operator == "<=":
+        return _to_boolean_object(left_value <= right_value)
+
+    elif operator == ">=":
+        return _to_boolean_object(left_value >= right_value)
+
     elif operator == "==" or operator == "===":
         return _to_boolean_object(left_value == right_value)
 

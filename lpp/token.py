@@ -21,6 +21,7 @@ class TokenType(Enum):
     EQ = auto() # Igualdad (==)
     FALSE = auto()
     FUNCTION = auto()
+    GE = auto() # Gretater Than or Equal To (>=)
     GT = auto() # Gretater Than (>)
     IDENT = auto() # Identificador
     IF = auto() # Condicional if
@@ -29,6 +30,7 @@ class TokenType(Enum):
     LBRACE = auto() # Llave izquierda {
     LET = auto() # Definición de variables
     LPAREN = auto() # Paréntesis izquierdo (
+    LE = auto() # Less Than or Equal To (<=)
     LT = auto() # Less Than (<)
     MINUS = auto() # Resta
     MULTIPLICATION = auto()

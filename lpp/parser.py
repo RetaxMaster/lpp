@@ -53,7 +53,9 @@ PRECEDENCES: Dict[TokenType, Precedence] = {
     TokenType.NOT_EQ: Precedence.EQUALS,
     TokenType.SIMILAR: Precedence.EQUALS,
     TokenType.DIFF: Precedence.EQUALS,
+    TokenType.LE: Precedence.LESSGREATER,
     TokenType.LT: Precedence.LESSGREATER,
+    TokenType.GE: Precedence.LESSGREATER,
     TokenType.GT: Precedence.LESSGREATER,
     TokenType.PLUS: Precedence.SUM,
     TokenType.MINUS: Precedence.SUM,
@@ -504,7 +506,9 @@ class Parser:
             TokenType.NOT_EQ: self._parse_infix_expression,
             TokenType.SIMILAR: self._parse_infix_expression,
             TokenType.DIFF: self._parse_infix_expression,
+            TokenType.LE: self._parse_infix_expression,
             TokenType.LT: self._parse_infix_expression,
+            TokenType.GE: self._parse_infix_expression,
             TokenType.GT: self._parse_infix_expression,
             TokenType.LPAREN: self._parse_call
         }
