@@ -16,6 +16,7 @@ from lpp.object import (
 )
 
 
+# Singletone
 TRUE = Boolean(True)
 FALSE = Boolean(False)
 NULL = Null()
@@ -81,6 +82,17 @@ def evaluate(node: ast.ASTNode) -> Optional[Object]:
 
         return _evaluate_infix_expression(node.operator, left, right)
 
+    elif node_type == ast.Block:
+
+        node = cast(ast.Block, node)
+        return _evaluate_statements(node.statements)
+
+    elif node_type == ast.If:
+
+        node = cast(ast.If, node)
+
+        return _evaluate_if_expression(node)
+
     return None
 
 
@@ -108,6 +120,35 @@ def _evaluate_bang_operator_expression(right: Object) -> Object:
 
     else:
         return FALSE
+
+
+def _evaluate_if_expression(if_expression: ast.If) -> Optional[Object]:
+
+    assert if_expression.condition is not None
+
+    condition = evaluate(if_expression.condition)
+
+    assert condition is not None
+
+    if _is_truthy(condition):
+
+        assert if_expression.consequence is not None
+        return evaluate(if_expression.consequence)
+
+    elif if_expression.alternative is not None:
+        return evaluate(if_expression.alternative)
+
+    else:
+        return NULL
+
+
+def _is_truthy(obj: Object) -> bool:
+
+    if obj is NULL or obj is FALSE:
+        return False
+    
+    else:
+        return True
 
 
 def _evaluate_infix_expression(operator: str,

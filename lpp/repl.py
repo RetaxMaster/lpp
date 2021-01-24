@@ -14,6 +14,7 @@ from lpp.token import (
 )
 
 EOF_TOKEN: Token = Token(TokenType.EOF, "")
+ENGLISH_WORDS = ("clear", "clear()", "exit", "exit()")
 
 def clear(): 
   
@@ -37,8 +38,11 @@ def start_repl():
     # Walrus operator, asigna a la vez que compara
     while (source := input(">> ")) != "salir()":
 
-        if source == "limpiar()":
+        if source == "limpiar()" or source == "limpiar":
             clear()
+
+        elif source in ENGLISH_WORDS:
+            print("Soy un lenguaje hecho en español. Dímelo en español por favor :D")
 
         else:
         
