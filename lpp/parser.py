@@ -138,7 +138,7 @@ class Parser:
 
         assert self._peek_token is not None
         error = f"Se esperaba que el siguiente token fuera {token_type} " + \
-                f"pero se obtuvo {self._peek_token.token_type}"
+                f"pero se obtuvo {self._peek_token.token_type} en la línea {self._peek_token.line}"
 
         self._errors.append(error)
 
@@ -171,6 +171,7 @@ class Parser:
         assert self._current_token is not None
 
         return Boolean(token=self._current_token,
+                        line=self._current_token.line,
                         value=self._current_token.token_type == TokenType.TRUE)
 
 
@@ -178,7 +179,7 @@ class Parser:
 
         assert self._current_token is not None
 
-        call = Call(self._current_token, function)
+        call = Call(self._current_token, self._current_token.line, function)
         call.arguments = self._parse_call_arguments()
 
         return call
@@ -222,7 +223,7 @@ class Parser:
             prefix_parse_fn = self._prefix_parse_fns[self._current_token.token_type]
 
         except KeyError:
-            message = f"No se encontró ninguna función para parsear {self._current_token.literal}"
+            message = f"No se encontró ninguna función para parsear {self._current_token.literal} en la línea {self._current_token.line}"
             self._errors.append(message)
             return None
 
@@ -268,7 +269,7 @@ class Parser:
 
         assert self._current_token is not None
 
-        function = Function(token=self._current_token)
+        function = Function(token=self._current_token, line=self._current_token.line)
 
         if not self._expected_token(TokenType.LPAREN):
             return None
@@ -299,6 +300,7 @@ class Parser:
         assert self._current_token is not None
 
         identifier = Identifier(token=self._current_token,
+                                line=self._current_token.line,
                                 value=self._current_token.literal)
 
         params.append(identifier)
@@ -309,6 +311,7 @@ class Parser:
             self._advance_tokens()
 
             identifier = Identifier(token=self._current_token,
+                                line=self._current_token.line,
                                 value=self._current_token.literal)
 
             params.append(identifier)
@@ -336,6 +339,7 @@ class Parser:
         assert self._current_token is not None
 
         return Identifier(token=self._current_token,
+                            line=self._current_token.line,
                             value=self._current_token.literal)
 
 
@@ -343,7 +347,7 @@ class Parser:
 
         assert self._current_token is not None
 
-        if_expression = If(token=self._current_token)
+        if_expression = If(token=self._current_token, line=self._current_token.line)
 
         # Si el siguiente token no es un paréntesis de apertura, hay un error de sintaxis
         if not self._expected_token(TokenType.LPAREN):
@@ -382,6 +386,7 @@ class Parser:
         assert self._current_token is not None
 
         infix = Infix(token=self._current_token,
+                        line=self._current_token.line,
                         operator=self._current_token.literal,
                         left=left)
 
@@ -396,7 +401,7 @@ class Parser:
 
         assert self._current_token is not None
 
-        integer = Integer(token=self._current_token)
+        integer = Integer(token=self._current_token, line=self._current_token.line)
 
         try:
             integer.value = int(self._current_token.literal)
@@ -443,6 +448,7 @@ class Parser:
         assert self._current_token is not None
 
         prefix_expression = Prefix(token=self._current_token,
+                                    line=self._current_token.line,
                                     operator=self._current_token.literal)
 
         self._advance_tokens()

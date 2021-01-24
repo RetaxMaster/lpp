@@ -26,11 +26,13 @@ class ASTTest(TestCase):
 
                 name=Identifier(
                     token=Token(TokenType.IDENT, literal="mi_var"),
+                    line=1,
                     value="mi_var"
                 ),
 
                 value=Identifier(
                     token=Token(TokenType.IDENT, literal="otra_variable"),
+                    line=1,
                     value="otra_variable"
                 )
 
@@ -52,6 +54,7 @@ class ASTTest(TestCase):
 
                 return_value=Identifier(
                     token=Token(TokenType.IDENT, literal="mi_var"),
+                    line=1,
                     value="mi_var"
                 )
 
@@ -73,6 +76,7 @@ class ASTTest(TestCase):
 
                 expression=Identifier(
                     token=Token(TokenType.IDENT, literal="foobar"),
+                    line=1,
                     value="foobar"
                 )
 
@@ -84,6 +88,7 @@ class ASTTest(TestCase):
 
                 expression=Identifier(
                     token=Token(TokenType.INT, literal="5"),
+                    line=1,
                     value="5"
                 )
 

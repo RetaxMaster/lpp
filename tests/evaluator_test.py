@@ -148,21 +148,21 @@ class EvaluatorTest(TestCase):
 
         tests: List[Tuple[str, str]] = [
             ('5 + verdadero',
-             'Discrepancia de tipos: INTEGER + BOOLEAN'),
+             'Discrepancia de tipos: INTEGER + BOOLEAN en la linea 1'),
             ('5 + verdadero; 9;',
-             'Discrepancia de tipos: INTEGER + BOOLEAN'),
+             'Discrepancia de tipos: INTEGER + BOOLEAN en la linea 1'),
             ('-verdadero',
-             'Operador desconocido: -BOOLEAN'),
+             'Operador desconocido: -BOOLEAN en la linea 1'),
             ('verdadero + falso;',
-             'Operador desconocido: BOOLEAN + BOOLEAN'),
+             'Operador desconocido: BOOLEAN + BOOLEAN en la linea 1'),
             ('5; verdadero - falso; 10;',
-             'Operador desconocido: BOOLEAN - BOOLEAN'),
+             'Operador desconocido: BOOLEAN - BOOLEAN en la linea 1'),
             ('''
                 si (10 > 7) {
                     regresa verdadero + falso;
                 }
             ''',
-             'Operador desconocido: BOOLEAN + BOOLEAN'),
+             'Operador desconocido: BOOLEAN + BOOLEAN en la linea 3'),
             ('''
                 si (10 > 1) {
                     si (verdadero) {
@@ -171,7 +171,7 @@ class EvaluatorTest(TestCase):
                     regresa 1;
                 }
             ''',
-             'Operador desconocido: BOOLEAN * BOOLEAN'),
+             'Operador desconocido: BOOLEAN * BOOLEAN en la linea 4'),
             ('''
                 si (5 < 2) {
                     regresa 1;
@@ -179,7 +179,7 @@ class EvaluatorTest(TestCase):
                     regresa verdadero / falso;
                 }
             ''',
-             'Operador desconocido: BOOLEAN / BOOLEAN'),
+             'Operador desconocido: BOOLEAN / BOOLEAN en la linea 5'),
 
         ]
 

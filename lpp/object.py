@@ -32,7 +32,7 @@ class Object(ABC):
 
 class Integer(Object):
 
-    def __init__(self, value: int) -> None:
+    def __init__(self, value: int, line: int) -> None:
         self.value = value
 
     

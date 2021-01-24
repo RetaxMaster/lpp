@@ -55,6 +55,55 @@ class LexerTest(TestCase):
         self.assertEquals(tokens, expected_tokens)
 
     
+    def test_line_break(self) -> None:
+
+        # Iician pegadas a las comillas de apertura porque es la línea 1, las comillas de cierre están abajo porque hay un caracter \n que igual es contado por el lexer, por eso expectamos 21 tokens
+        source: str = """variable cinco = 5;
+                        variable seis = 6;
+                        variable siete = 7;
+                        variable ocho = 8;
+                        """
+
+        lexer: Lexer = Lexer(source)
+
+        tokens: List[Token] = []
+
+        for i in range(21):
+            tokens.append(lexer.next_token())
+
+        expected_tokens: List[Token] = [
+
+            Token(TokenType.LET, "variable", 1),
+            Token(TokenType.IDENT, "cinco", 1),
+            Token(TokenType.ASSIGN, "=", 1),
+            Token(TokenType.INT, "5", 1),
+            Token(TokenType.SEMICOLON, ";", 1),
+
+            Token(TokenType.LET, "variable", 2),
+            Token(TokenType.IDENT, "seis", 2),
+            Token(TokenType.ASSIGN, "=", 2),
+            Token(TokenType.INT, "6", 2),
+            Token(TokenType.SEMICOLON, ";", 2),
+
+            Token(TokenType.LET, "variable", 3),
+            Token(TokenType.IDENT, "siete", 3),
+            Token(TokenType.ASSIGN, "=", 3),
+            Token(TokenType.INT, "7", 3),
+            Token(TokenType.SEMICOLON, ";", 3),
+
+            Token(TokenType.LET, "variable", 4),
+            Token(TokenType.IDENT, "ocho", 4),
+            Token(TokenType.ASSIGN, "=", 4),
+            Token(TokenType.INT, "8", 4),
+            Token(TokenType.SEMICOLON, ";", 4),
+
+            Token(TokenType.EOF, "", 5),
+
+        ]
+
+        self.assertEquals(tokens, expected_tokens)
+
+
     def test_eof(self) -> None:
 
         source: str = "+"
@@ -136,22 +185,22 @@ class LexerTest(TestCase):
             tokens.append(lexer.next_token())
 
         expected_tokens: List[Token] = [
-            Token(TokenType.LET, "variable"),
-            Token(TokenType.IDENT, "suma"),
-            Token(TokenType.ASSIGN, "="),
-            Token(TokenType.FUNCTION, "funcion"),
-            Token(TokenType.LPAREN, "("),
-            Token(TokenType.IDENT, "x"),
-            Token(TokenType.COMMA, ","),
-            Token(TokenType.IDENT, "y"),
-            Token(TokenType.RPAREN, ")"),
-            Token(TokenType.LBRACE, "{"),
-            Token(TokenType.IDENT, "x"),
-            Token(TokenType.PLUS, "+"),
-            Token(TokenType.IDENT, "y"),
-            Token(TokenType.SEMICOLON, ";"),
-            Token(TokenType.RBRACE, "}"),
-            Token(TokenType.SEMICOLON, ";"),
+            Token(TokenType.LET, "variable", 2),
+            Token(TokenType.IDENT, "suma", 2),
+            Token(TokenType.ASSIGN, "=", 2),
+            Token(TokenType.FUNCTION, "funcion", 2),
+            Token(TokenType.LPAREN, "(", 2),
+            Token(TokenType.IDENT, "x", 2),
+            Token(TokenType.COMMA, ",", 2),
+            Token(TokenType.IDENT, "y", 2),
+            Token(TokenType.RPAREN, ")", 2),
+            Token(TokenType.LBRACE, "{", 2),
+            Token(TokenType.IDENT, "x", 3),
+            Token(TokenType.PLUS, "+", 3),
+            Token(TokenType.IDENT, "y", 3),
+            Token(TokenType.SEMICOLON, ";", 3),
+            Token(TokenType.RBRACE, "}", 4),
+            Token(TokenType.SEMICOLON, ";", 4),
         ]
 
         self.assertEquals(tokens, expected_tokens)
@@ -159,9 +208,7 @@ class LexerTest(TestCase):
 
     def test_function_call(self) -> None:
         
-        source: str = """
-            variable resultado = suma(dos, tres);
-        """
+        source: str = """variable resultado = suma(dos, tres);"""
 
         lexer: Lexer = Lexer(source)
 
@@ -206,23 +253,23 @@ class LexerTest(TestCase):
             tokens.append(lexer.next_token())
 
         expected_tokens: List[Token] = [
-            Token(TokenType.IF, "si"),
-            Token(TokenType.LPAREN, "("),
-            Token(TokenType.INT, "5"),
-            Token(TokenType.LT, "<"),
-            Token(TokenType.INT, "10"),
-            Token(TokenType.RPAREN, ")"),
-            Token(TokenType.LBRACE, "{"),
-            Token(TokenType.RETURN, "regresa"),
-            Token(TokenType.TRUE, "verdadero"),
-            Token(TokenType.SEMICOLON, ";"),
-            Token(TokenType.RBRACE, "}"),
-            Token(TokenType.ELSE, "si_no"),
-            Token(TokenType.LBRACE, "{"),
-            Token(TokenType.RETURN, "regresa"),
-            Token(TokenType.FALSE, "falso"),
-            Token(TokenType.SEMICOLON, ";"),
-            Token(TokenType.RBRACE, "}"),
+            Token(TokenType.IF, "si", 2),
+            Token(TokenType.LPAREN, "(", 2),
+            Token(TokenType.INT, "5", 2),
+            Token(TokenType.LT, "<", 2),
+            Token(TokenType.INT, "10", 2),
+            Token(TokenType.RPAREN, ")", 2),
+            Token(TokenType.LBRACE, "{", 2),
+            Token(TokenType.RETURN, "regresa", 3),
+            Token(TokenType.TRUE, "verdadero", 3),
+            Token(TokenType.SEMICOLON, ";", 3),
+            Token(TokenType.RBRACE, "}", 4),
+            Token(TokenType.ELSE, "si_no", 4),
+            Token(TokenType.LBRACE, "{", 4),
+            Token(TokenType.RETURN, "regresa", 5),
+            Token(TokenType.FALSE, "falso", 5),
+            Token(TokenType.SEMICOLON, ";", 5),
+            Token(TokenType.RBRACE, "}", 6),
         ]
 
         self.assertEquals(tokens, expected_tokens)
@@ -246,25 +293,25 @@ class LexerTest(TestCase):
             tokens.append(lexer.next_token())
 
         expected_tokens: List[Token] = [
-            Token(TokenType.INT, "10"),
-            Token(TokenType.EQ, "=="),
-            Token(TokenType.INT, "10"),
-            Token(TokenType.SEMICOLON, ";"),
+            Token(TokenType.INT, "10", 2),
+            Token(TokenType.EQ, "==", 2),
+            Token(TokenType.INT, "10", 2),
+            Token(TokenType.SEMICOLON, ";", 2),
 
-            Token(TokenType.INT, "10"),
-            Token(TokenType.NOT_EQ, "!="),
-            Token(TokenType.INT, "9"),
-            Token(TokenType.SEMICOLON, ";"),
+            Token(TokenType.INT, "10", 3),
+            Token(TokenType.NOT_EQ, "!=", 3),
+            Token(TokenType.INT, "9", 3),
+            Token(TokenType.SEMICOLON, ";", 3),
 
-            Token(TokenType.INT, "10"),
-            Token(TokenType.LE, "<="),
-            Token(TokenType.INT, "9"),
-            Token(TokenType.SEMICOLON, ";"),
+            Token(TokenType.INT, "10", 4),
+            Token(TokenType.LE, "<=", 4),
+            Token(TokenType.INT, "9", 4),
+            Token(TokenType.SEMICOLON, ";", 4),
 
-            Token(TokenType.INT, "10"),
-            Token(TokenType.GE, ">="),
-            Token(TokenType.INT, "9"),
-            Token(TokenType.SEMICOLON, ";"),
+            Token(TokenType.INT, "10", 5),
+            Token(TokenType.GE, ">=", 5),
+            Token(TokenType.INT, "9", 5),
+            Token(TokenType.SEMICOLON, ";", 5),
         ]
 
         self.assertEquals(tokens, expected_tokens)
@@ -286,14 +333,15 @@ class LexerTest(TestCase):
             tokens.append(lexer.next_token())
 
         expected_tokens: List[Token] = [
-            Token(TokenType.INT, "10"),
-            Token(TokenType.SIMILAR, "==="),
-            Token(TokenType.INT, "10"),
-            Token(TokenType.SEMICOLON, ";"),
-            Token(TokenType.INT, "10"),
-            Token(TokenType.DIFF, "!=="),
-            Token(TokenType.INT, "9"),
-            Token(TokenType.SEMICOLON, ";"),
+            Token(TokenType.INT, "10", 2),
+            Token(TokenType.SIMILAR, "===", 2),
+            Token(TokenType.INT, "10", 2),
+            Token(TokenType.SEMICOLON, ";", 2),
+            
+            Token(TokenType.INT, "10", 3),
+            Token(TokenType.DIFF, "!==", 3),
+            Token(TokenType.INT, "9", 3),
+            Token(TokenType.SEMICOLON, ";", 3),
         ]
 
         self.assertEquals(tokens, expected_tokens)
@@ -317,22 +365,25 @@ class LexerTest(TestCase):
             tokens.append(lexer.next_token())
 
         expected_tokens: List[Token] = [
-            Token(TokenType.INT, "10"),
-            Token(TokenType.SIMILAR, "==="),
-            Token(TokenType.INT, "10"),
-            Token(TokenType.SEMICOLON, ";"),
-            Token(TokenType.INT, "10"),
-            Token(TokenType.DIFF, "!=="),
-            Token(TokenType.INT, "9"),
-            Token(TokenType.SEMICOLON, ";"),
-            Token(TokenType.INT, "10"),
-            Token(TokenType.EQ, "=="),
-            Token(TokenType.INT, "10"),
-            Token(TokenType.SEMICOLON, ";"),
-            Token(TokenType.INT, "10"),
-            Token(TokenType.NOT_EQ, "!="),
-            Token(TokenType.INT, "9"),
-            Token(TokenType.SEMICOLON, ";"),
+            Token(TokenType.INT, "10", 2),
+            Token(TokenType.SIMILAR, "===", 2),
+            Token(TokenType.INT, "10", 2),
+            Token(TokenType.SEMICOLON, ";", 2),
+
+            Token(TokenType.INT, "10", 3),
+            Token(TokenType.DIFF, "!==", 3),
+            Token(TokenType.INT, "9", 3),
+            Token(TokenType.SEMICOLON, ";", 3),
+
+            Token(TokenType.INT, "10", 4),
+            Token(TokenType.EQ, "==", 4),
+            Token(TokenType.INT, "10", 4),
+            Token(TokenType.SEMICOLON, ";", 4),
+
+            Token(TokenType.INT, "10", 5),
+            Token(TokenType.NOT_EQ, "!=", 5),
+            Token(TokenType.INT, "9", 5),
+            Token(TokenType.SEMICOLON, ";", 5),
         ]
 
         self.assertEquals(tokens, expected_tokens)

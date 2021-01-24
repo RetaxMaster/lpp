@@ -26,9 +26,9 @@ NULL = Null()
 
 
 # Errores
-_TYPE_MISMATCH = "Discrepancia de tipos: {} {} {}"
-_UNKNOWN_PREFIX_OPERATOR = "Operador desconocido: {}{}"
-_UNKNOWN_INFIX_OPERATOR = "Operador desconocido: {} {} {}"
+_TYPE_MISMATCH = "Discrepancia de tipos: {} {} {} en la linea {}"
+_UNKNOWN_PREFIX_OPERATOR = "Operador desconocido: {}{} en la linea {}"
+_UNKNOWN_INFIX_OPERATOR = "Operador desconocido: {} {} {} en la linea {}"
 
 
 def evaluate(node: ast.ASTNode) -> Optional[Object]:
@@ -56,7 +56,7 @@ def evaluate(node: ast.ASTNode) -> Optional[Object]:
         assert node.value is not None
 
         # Este Integer NO es el mismo que el ast.Integer, este Integer es la representación en objeto de el nodo ast.Integer que estemos evaluando
-        return Integer(node.value)
+        return Integer(node.value, node.line)
 
     elif node_type == ast.Boolean:
 
@@ -76,7 +76,7 @@ def evaluate(node: ast.ASTNode) -> Optional[Object]:
 
         assert right is not None
 
-        return _evaluate_prefix_expression(node.operator, right)
+        return _evaluate_prefix_expression(node.line, node.operator, right)
 
     elif node_type == ast.Infix:
 
@@ -89,7 +89,7 @@ def evaluate(node: ast.ASTNode) -> Optional[Object]:
 
         assert right is not None and left is not None
 
-        return _evaluate_infix_expression(node.operator, left, right)
+        return _evaluate_infix_expression(node.line, node.operator, left, right)
 
     elif node_type == ast.Block:
 
@@ -192,14 +192,15 @@ def _is_truthy(obj: Object) -> bool:
         return True
 
 
-def _evaluate_infix_expression(operator: str,
+def _evaluate_infix_expression(line: int,
+                                operator: str,
                                 left: Object,
                                 right: Object) -> Object:
 
     if left.type() == ObjectType.INTEGER \
         and right.type() == ObjectType.INTEGER:
 
-        return _evaluate_integer_infix_expression(operator, left, right)
+        return _evaluate_integer_infix_expression(line, operator, left, right)
     
     elif operator == "==" or operator == "===":
         return _to_boolean_object(left is right)
@@ -210,15 +211,18 @@ def _evaluate_infix_expression(operator: str,
     elif left.type() != right.type():
         return _new_error(_TYPE_MISMATCH, [left.type().name,
                                             operator,
-                                            right.type().name])
+                                            right.type().name,
+                                            line])
 
     else:
         return _new_error(_UNKNOWN_INFIX_OPERATOR, [left.type().name,
                                                     operator,
-                                                    right.type().name])
+                                                    right.type().name,
+                                                    line])
 
 
-def _evaluate_integer_infix_expression(operator: str,
+def _evaluate_integer_infix_expression(line: int,
+                                        operator: str,
                                         left: Object,
                                         right: Object) -> Object:
 
@@ -226,16 +230,16 @@ def _evaluate_integer_infix_expression(operator: str,
     right_value: int = cast(Integer, right).value
 
     if operator == "+":
-        return Integer(left_value + right_value)
+        return Integer(left_value + right_value, line)
 
     elif operator == "-":
-        return Integer(left_value - right_value)
+        return Integer(left_value - right_value, line)
 
     elif operator == "*":
-        return Integer(left_value * right_value)
+        return Integer(left_value * right_value, line)
 
     elif operator == "/":
-        return Integer(left_value // right_value)
+        return Integer(left_value // right_value, line)
 
     elif operator == "<":
         return _to_boolean_object(left_value < right_value)
@@ -258,29 +262,30 @@ def _evaluate_integer_infix_expression(operator: str,
     else:
         return _new_error(_UNKNOWN_INFIX_OPERATOR, [left.type().name,
                                                     operator,
-                                                    right.type().name])
+                                                    right.type().name,
+                                                    line])
 
     
-def _evaluate_minus_operator_expression(right: Object) -> Object:
+def _evaluate_minus_operator_expression(line: int, right: Object) -> Object:
 
     if type(right) != Integer:
-        return _new_error(_UNKNOWN_PREFIX_OPERATOR, ["-", right.type().name])
+        return _new_error(_UNKNOWN_PREFIX_OPERATOR, ["-", right.type().name, line])
 
     right = cast(Integer, right)
 
-    return Integer(-right.value)
+    return Integer(-right.value, line)
 
 
-def _evaluate_prefix_expression(operator: str, right: Object) -> Object:
+def _evaluate_prefix_expression(line: int, operator: str, right: Object) -> Object:
 
     if operator == "!":
         return _evaluate_bang_operator_expression(right)
 
     elif operator == "-":
-        return _evaluate_minus_operator_expression(right)
+        return _evaluate_minus_operator_expression(line, right)
 
     else:
-        return _new_error(_UNKNOWN_PREFIX_OPERATOR, [operator, right.type().name])
+        return _new_error(_UNKNOWN_PREFIX_OPERATOR, [operator, right.type().name, line])
 
 
 def _new_error(message: str, args: List[Any]) -> Error:
