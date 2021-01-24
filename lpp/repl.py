@@ -5,6 +5,7 @@ from typing import List
 from os import system, name 
 
 from lpp.ast import Program
+from lpp.evaluator import evaluate
 from lpp.lexer import Lexer
 from lpp.parser import Parser
 from lpp.token import (
@@ -50,4 +51,8 @@ def start_repl():
                 _print_parse_errors(parser.errors)
                 continue
 
-            print(program)
+            evaluated = evaluate(program)
+
+            if evaluated is not None:
+
+                print(evaluated.inspect())
