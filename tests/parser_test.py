@@ -404,7 +404,7 @@ class ParserTest(TestCase):
 
             self.assertEquals(len(function.parameters), len(test["expected_params"]))
 
-            for idx, param in enumerate(test["expceted_params"]):
+            for idx, param in enumerate(test["expected_params"]):
 
                 self._test_literal_expression(function.parameters[idx], param)
 
