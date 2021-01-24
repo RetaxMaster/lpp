@@ -1,4 +1,8 @@
+import readline
+
 from typing import List
+
+from os import system, name 
 
 from lpp.ast import Program
 from lpp.lexer import Lexer
@@ -9,6 +13,16 @@ from lpp.token import (
 )
 
 EOF_TOKEN: Token = Token(TokenType.EOF, "")
+
+def clear(): 
+  
+    # for windows 
+    if name == 'nt': 
+        _ = system('cls') 
+  
+    # for mac and linux(here, os.name is 'posix') 
+    else: 
+        _ = system('clear') 
 
 
 def _print_parse_errors(errors: List[str]):
@@ -21,14 +35,19 @@ def start_repl():
     
     # Walrus operator, asigna a la vez que compara
     while (source := input(">> ")) != "salir()":
+
+        if source == "limpiar()":
+            clear()
+
+        else:
         
-        lexer: Lexer = Lexer(source)
-        parser: Parser = Parser(lexer)
+            lexer: Lexer = Lexer(source)
+            parser: Parser = Parser(lexer)
 
-        program: Program = parser.parse_program()
+            program: Program = parser.parse_program()
 
-        if len(parser.errors) > 0:
-            _print_parse_errors(parser.errors)
-            continue
+            if len(parser.errors) > 0:
+                _print_parse_errors(parser.errors)
+                continue
 
-        print(program)
+            print(program)
