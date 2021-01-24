@@ -13,6 +13,7 @@ from lpp.ast import (
     Boolean,
     Expression,
     ExpressionStatement,
+    Function,
     Identifier,
     If,
     Infix,
@@ -338,6 +339,74 @@ class ParserTest(TestCase):
         # Test alternative
         assert if_expression.alternative is not None
         self._test_block(if_expression.alternative, 2, ["z", "x"])
+
+
+    def test_function_literal(self) -> None:
+
+        source: str = "funcion(x, y) { x + y}"
+
+        lexer: Lexer = Lexer(source)
+        parser: Parser = Parser(lexer)
+
+        program: Program = parser.parse_program()
+
+        self._test_program_statements(parser, program, 1)
+
+        # Test correct node type
+        function_literal = cast(Function, cast(ExpressionStatement,
+                                                program.statements[0]).expression)
+
+        self.assertIsInstance(function_literal, Function)
+
+        # Test params
+        self.assertEquals(len(function_literal.parameters), 2)
+        self._test_literal_expression(function_literal.parameters[0], "x")
+        self._test_literal_expression(function_literal.parameters[1], "y")
+
+        # Test body
+        assert function_literal.body is not None
+        self.assertEquals(len(function_literal.body.statements), 1)
+
+        body = cast(ExpressionStatement, function_literal.body.statements[0])
+
+        assert body.expression is not None
+        self._test_infix_expression(body.expression, "x", "+", "y")
+
+
+    def test_function_parameters(self) -> None:
+
+        tests = [
+            {
+                "input": "funcion() {};",
+                "expected_params": []
+            },
+            {
+                "input": "funcion(x) {};",
+                "expected_params": ["x"]
+            },
+            {
+                "input": "funcion(x, y, z) {};",
+                "expected_params": ["x", "y", "z"]
+            }
+        ]
+
+        for test in tests:
+
+            lexer: Lexer = Lexer(test["input"]) # type: ignore
+            parser: Parser = Parser(lexer)
+
+            program: Program = parser.parse_program()
+
+            self._test_program_statements(parser, program, 1)
+
+            function = cast(Function, cast(ExpressionStatement,
+                                        program.statements[0]).expression)
+
+            self.assertEquals(len(function.parameters), len(test["expected_params"]))
+
+            for idx, param in enumerate(test["expceted_params"]):
+
+                self._test_literal_expression(function.parameters[idx], param)
 
 
     def _test_block(self,
