@@ -306,17 +306,57 @@ class ParserTest(TestCase):
 
         # Test consequence
         assert if_expression.consequence is not None
-        self.assertIsInstance(if_expression.consequence, Block)
-        self.assertEquals(len(if_expression.consequence.statements), 1)
-
-        consequence_statement = cast(ExpressionStatement, 
-                                    if_expression.consequence.statements[0])
-
-        assert consequence_statement.expression is not None
-        self._test_identifier(consequence_statement.expression, "z")
+        self._test_block(if_expression.consequence, 1, ["z"])
 
         # Test alternative
         self.assertIsNone(if_expression.alternative)
+
+    def test_if_else_expression(self) -> None:
+
+        source: str = 'si (a > b) { x } si_no { z; x; }'
+
+        lexer: Lexer = Lexer(source)
+        parser: Parser = Parser(lexer)
+
+        program: Program = parser.parse_program()
+
+        self._test_program_statements(parser, program, 1)
+
+        # Test correct node types
+        if_expression = cast(If, cast(ExpressionStatement, program.statements[0]).expression)
+        self.assertIsInstance(if_expression, If)
+
+        # Test condition
+        assert if_expression.condition is not None
+        
+        self._test_infix_expression(cast(Expression, if_expression.condition), "a", ">", "b")
+
+        # Test consequence
+        assert if_expression.consequence is not None
+        self._test_block(if_expression.consequence, 1, ["x"])
+
+        # Test alternative
+        assert if_expression.alternative is not None
+        self._test_block(if_expression.alternative, 2, ["z", "x"])
+
+
+    def _test_block(self,
+                    block: Block,
+                    statements_number,
+                    expected_identifiers: List[str]) -> None:
+
+
+        self.assertIsInstance(block, Block)
+        self.assertEquals(len(block.statements), statements_number)
+        self.assertEquals(len(expected_identifiers), len(block.statements))
+        
+        # Recorro cada statement junto a los expected identifiers
+        for statement, identifier in zip(block.statements, expected_identifiers):
+
+            statement = cast(ExpressionStatement, statement)
+
+            assert statement.expression is not None
+            self._test_identifier(statement.expression, identifier)
 
 
     def _test_boolean(self, 

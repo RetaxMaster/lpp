@@ -263,6 +263,17 @@ class Parser:
 
         if_expression.consequence = self._parse_block()
 
+        # Estamos en el "}", si el siguiente token es el else, entonces lo parseamos
+        assert self._peek_token is not None
+        if self._peek_token.token_type == TokenType.ELSE:
+
+            self._advance_tokens()
+            # Si el siguiente token no es una llave de apertura, hay un error de sintaxis
+            if not self._expected_token(TokenType.LBRACE):
+                return None
+
+            if_expression.alternative = self._parse_block()
+
         return if_expression
 
 
