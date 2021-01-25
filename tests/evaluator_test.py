@@ -193,6 +193,8 @@ class EvaluatorTest(TestCase):
              'Operador desconocido: BOOLEAN / BOOLEAN'),
             ('foobar;',
              'Identificador no encontrado: foobar'),
+            ('"Foo" - "Bar";',
+             'Operador desconocido: STRING - STRING'),
 
         ]
 
@@ -285,6 +287,41 @@ class EvaluatorTest(TestCase):
 
             evaluated = cast(String, evaluated)
             self.assertEquals(evaluated.value, expected)
+
+
+    def test_string_concatenation(self) -> None:
+
+        tests: List[Tuple[str, str]] = [
+            ('"Foo" + "bar";', 'Foobar'),
+            ('"Hello," + " " + "world!"', 'Hello, world!'),
+            ('''
+                 variable saludo = funcion(nombre) {
+                     regresa "Hola " + nombre + "!";
+                 };
+                 saludo("David");
+              ''',
+              'Hola David!'),
+        ]
+
+        for source, expected in tests:
+
+            evaluated = self._evaluate_tests(source)
+            self._test_string_object(evaluated, expected)
+
+
+    def test_string_comparison(self) -> None:
+
+        tests: List[Tuple[str, bool]] = [
+            ('"a" == "a"', True),
+            ('"a" != "a"', False),
+            ('"a" == "b"', False),
+            ('"a" != "b"', True),
+        ]
+
+        for source, expected in tests:
+
+            evaluated = self._evaluate_tests(source)
+            self._test_boolean_object(evaluated, expected)
 
 
     def _evaluate_tests(self, source: str) -> Object:
