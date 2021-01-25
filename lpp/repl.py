@@ -1,5 +1,7 @@
 import readline
 
+from re import match
+
 from typing import List
 
 from os import system, name 
@@ -15,7 +17,7 @@ from lpp.token import (
 )
 
 EOF_TOKEN: Token = Token(TokenType.EOF, "")
-ENGLISH_WORDS = ("clear", "clear()", "exit", "exit()")
+ENGLISH_WORDS = ("clear", "clear()", "exit", "exit()", "history", "history()")
 
 def clear(): 
   
@@ -34,6 +36,27 @@ def _print_parse_errors(errors: List[str]):
         print(error)
 
 
+def execute_program(scanned):
+    
+    lexer: Lexer = Lexer(" ".join(scanned))
+    parser: Parser = Parser(lexer)
+
+    program: Program = parser.parse_program()
+    env: Environment = Environment()
+
+    if len(parser.errors) > 0:
+        _print_parse_errors(parser.errors)
+        return 0
+
+    evaluated = evaluate(program, env)
+
+    if evaluated is not None:
+
+        print(evaluated.inspect())
+
+    return 1
+
+
 def start_repl():
 
     scanned: List[str] = []
@@ -44,24 +67,34 @@ def start_repl():
         if source == "limpiar()" or source == "limpiar":
             clear()
 
+        elif source == "historia()" or source == "historia":
+            print("\n" + "\n".join([f"{idx + 1}.- {command}" for idx, command in enumerate(scanned)]) + "\n")
+
         elif source in ENGLISH_WORDS:
             print("Soy un lenguaje hecho en español. Dímelo en español por favor :D")
+
+        elif match(r"^/", source):
+
+            command = source[1:]
+            
+            try:
+
+                command_position = int(command)
+
+                if command_position > len(scanned):
+                    print(f"El comando '{command_position}' no existe")
+
+                else:
+
+                    source_obtained = scanned[command_position - 1]
+
+                    scanned.append(source_obtained)
+                    execute_program(scanned)
+            
+            except ValueError:
+                print(f"La opción {command} no es un número.")
 
         else:
             
             scanned.append(source)
-            lexer: Lexer = Lexer(" ".join(scanned))
-            parser: Parser = Parser(lexer)
-
-            program: Program = parser.parse_program()
-            env: Environment = Environment()
-
-            if len(parser.errors) > 0:
-                _print_parse_errors(parser.errors)
-                continue
-
-            evaluated = evaluate(program, env)
-
-            if evaluated is not None:
-
-                print(evaluated.inspect())
+            execute_program(scanned)
