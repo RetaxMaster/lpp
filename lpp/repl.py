@@ -17,7 +17,7 @@ from lpp.token import (
 )
 
 EOF_TOKEN: Token = Token(TokenType.EOF, "")
-ENGLISH_WORDS = ("clear", "clear()", "exit", "exit()", "history", "history()")
+ENGLISH_WORDS = ("clear", "clear()", "exit", "exit()", "history", "history()", "exit", "exit()")
 
 def clear(): 
   
@@ -73,16 +73,16 @@ def start_repl():
         elif source in ENGLISH_WORDS:
             print("Soy un lenguaje hecho en español. Dímelo en español por favor :D")
 
-        elif match(r"^/", source):
+        elif match(r"^\$", source):
 
             command = source[1:]
             
             try:
 
                 command_position = int(command)
-
-                if command_position > len(scanned):
-                    print(f"El comando '{command_position}' no existe")
+                
+                if command_position == 0 or command_position > len(scanned):
+                    print(f"El comando '${command_position}' no existe")
 
                 else:
 
@@ -96,5 +96,6 @@ def start_repl():
 
         else:
             
-            scanned.append(source)
-            execute_program(scanned)
+            if source != "":
+                scanned.append(source)
+                execute_program(scanned)
