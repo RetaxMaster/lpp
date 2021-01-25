@@ -15,6 +15,7 @@ from lpp.evaluator import (
 from lpp.lexer import Lexer
 from lpp.object import (
     Boolean,
+    Environment,
     Error,
     Integer,
     Object,
@@ -180,6 +181,16 @@ class EvaluatorTest(TestCase):
                 }
             ''',
              'Operador desconocido: BOOLEAN / BOOLEAN'),
+            ('''
+                si (5 < 2) {
+                    regresa 1;
+                } si_no {
+                    regresa verdadero / falso;
+                }
+            ''',
+             'Operador desconocido: BOOLEAN / BOOLEAN'),
+            ('foobar;',
+             'Identificador no encontrado: foobar'),
 
         ]
 
@@ -193,13 +204,29 @@ class EvaluatorTest(TestCase):
             self.assertEquals(evaluated.message, expected)
 
 
+    def test_assignment_evaluation(self) -> None:
+
+        tests: List[Tuple[str, int]] = [
+            ('variable a = 5; a;', 5),
+            ('variable a = 5 * 5; a;', 25),
+            ('variable a = 5; variable b = a; b;', 5),
+            ('variable a = 5; variable b = a; variable c = a + b + 5; c;', 15),
+        ]
+
+        for source, expected in tests:
+
+            evaluated = self._evaluate_tests(source)
+            self._test_integer_object(evaluated, expected)
+
+
     def _evaluate_tests(self, source: str) -> Object:
 
         lexer: Lexer = Lexer(source)
         parser: Parser = Parser(lexer)
         program = parser.parse_program()
+        env: Environment = Environment()
 
-        evaluated = evaluate(program)
+        evaluated = evaluate(program, env)
 
         assert evaluated is not None
 
