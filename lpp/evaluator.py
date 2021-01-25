@@ -30,6 +30,7 @@ NULL = Null()
 _TYPE_MISMATCH = "Discrepancia de tipos: {} {} {}"
 _UNKNOWN_PREFIX_OPERATOR = "Operador desconocido: {}{}"
 _UNKNOWN_INFIX_OPERATOR = "Operador desconocido: {} {} {}"
+_UNKNOWN_IDENTIFIER = "Identificador no encontrado: {}"
 
 
 def evaluate(node: ast.ASTNode, env: Environment) -> Optional[Object]:
@@ -71,7 +72,7 @@ def evaluate(node: ast.ASTNode, env: Environment) -> Optional[Object]:
 
         node = cast(ast.Prefix, node)
         
-        # right es la expresión que está al lado del signo: 5, verdadero, falso... y nuestro evaluador ya saber como evaluar estas funciones así que nos retornará dichos objetos :D
+        # right es la expresión que está al lado del signo: 5 (evalua Integer), verdadero (evaluan Boolean), falso (evaluan Boolean), una_variable (evaluan Identifier)... y nuestro evaluador ya sabe como evaluar estas funciones así que nos retornará dichos objetos :D
         assert node.right is not None
         right = evaluate(node.right, env)
 
@@ -113,6 +114,21 @@ def evaluate(node: ast.ASTNode, env: Environment) -> Optional[Object]:
 
         return Return(value)
 
+    elif node_type == ast.LetStatement:
+
+        node = cast(ast.LetStatement, node)
+
+        assert node.value is not None
+        value = evaluate(node.value, env)
+        assert node.name is not None
+        env[node.name.value] = value
+
+    elif node_type == ast.Identifier:
+
+        node = cast(ast.Identifier, node)
+
+        return _evaluate_identifier(node, env)
+
     return None
 
 
@@ -132,6 +148,15 @@ def _evaluate_program(program: ast.Program, env : Environment) -> Optional[Objec
             return result
 
     return result
+
+
+def _evaluate_identifier(node: ast.Identifier, env: Environment) -> Object:
+
+    try:
+        return env[node.value]
+
+    except KeyError:
+        return _new_error(_UNKNOWN_IDENTIFIER, [node.value])
 
 
 def _evaluate_bang_operator_expression(right: Object) -> Object:

@@ -35,6 +35,8 @@ def _print_parse_errors(errors: List[str]):
 
 
 def start_repl():
+
+    scanned: List[str] = []
     
     # Walrus operator, asigna a la vez que compara
     while (source := input(">> ")) != "salir()":
@@ -46,8 +48,9 @@ def start_repl():
             print("Soy un lenguaje hecho en español. Dímelo en español por favor :D")
 
         else:
-        
-            lexer: Lexer = Lexer(source)
+            
+            scanned.append(source)
+            lexer: Lexer = Lexer(" ".join(scanned))
             parser: Parser = Parser(lexer)
 
             program: Program = parser.parse_program()
