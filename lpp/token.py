@@ -42,6 +42,7 @@ class TokenType(Enum):
     RPAREN = auto() # Paréntesis drecho )
     SEMICOLON = auto() # Punto y coma
     SIMILAR = auto() # Triple igualdad (===)
+    STRING = auto()
     TRUE = auto()
 
 
@@ -67,5 +68,5 @@ def lookup_token_type(literal: str) -> TokenType:
         "verdadero": TokenType.TRUE,
     }
 
-    # Miramos si es una palabra reservada de nuestro lenguaje, si no lo es, entonces es un identificadir (un nombre de variable p.ej)
+    # Miramos si es una palabra reservada de nuestro lenguaje, si no lo es, entonces es un identificador (un nombre de variable p.ej)
     return keywords.get(literal, TokenType.IDENT)

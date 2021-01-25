@@ -111,6 +111,11 @@ class Lexer:
         elif match(r"^$", self._character):
             token = Token(TokenType.EOF, self._character)
 
+        elif match(r"^\"|'$", self._character):
+            literal = self._read_string()
+
+            return Token(TokenType.STRING, literal)
+
         else:
             token = Token(TokenType.ILLEGAL, self._character)
 
@@ -190,6 +195,26 @@ class Lexer:
             self._read_character()
 
         return self._source[initial_position:self._position]
+
+
+    def _read_string(self) -> str:
+
+        # Vemos con cuál comilla se abrió este string, así en el while podemos buscar la misma comilla de cierre
+        quote_type = self._character
+
+        # Ahorita estamos en la comilla, así que leemos un caracter para avanzar hacia el string
+        self._read_character()
+
+        initial_position = self._position
+
+        while self._character != quote_type \
+                and self._read_position <= len(self._source):
+
+            self._read_character()
+
+        string =  self._source[initial_position:self._position]
+        self._read_character()
+        return string
 
 
     #A medida que se vaya leyendo el código, si encuentra uno o muchos espacios en blanco, los "skipea"

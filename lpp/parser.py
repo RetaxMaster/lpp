@@ -22,7 +22,8 @@ from lpp.ast import (
     Prefix,
     Program,
     ReturnStatement,
-    Statement
+    Statement,
+    StringLiteral
 )
 from lpp.lexer import Lexer
 from lpp.token import (
@@ -190,7 +191,7 @@ class Parser:
         
         assert self._peek_token is not None
 
-        if self._peek_token == TokenType.RPAREN:
+        if self._peek_token.token_type == TokenType.RPAREN:
 
             self._advance_tokens()
             return arguments
@@ -483,6 +484,14 @@ class Parser:
             return self._parse_expression_statement()
 
 
+    def  _parse_string_literal(self) -> Expression:
+
+        assert self._current_token is not None
+
+        return StringLiteral(token=self._current_token,
+                            value=self._current_token.literal)
+
+
     def _peek_precedence(self) -> Precedence:
 
         assert self._peek_token is not None
@@ -526,4 +535,5 @@ class Parser:
             TokenType.MINUS: self._parse_prefix_expression,
             TokenType.NEGATION: self._parse_prefix_expression,
             TokenType.TRUE: self._parse_boolean,
+            TokenType.STRING: self._parse_string_literal
         }
