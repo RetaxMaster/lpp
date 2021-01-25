@@ -18,10 +18,13 @@ from lpp.ast import (
     Identifier
 )
 
+from typing_extensions import Protocol
+
 
 class ObjectType(Enum):
 
     BOOLEAN = auto()
+    BUILTIN = auto()
     ERROR = auto()
     FUNCTION = auto()
     INTEGER = auto()
@@ -169,3 +172,24 @@ class String(Object):
 
     def inspect(self) -> str:
         return self.value
+
+
+# Una función que puede recibir argumentos variables
+class BuiltinFunction(Protocol):
+
+    def __call__(self, *args: Object) -> Object: ...
+
+
+class Builtin(Object):
+
+    def __init__(self, fn: BuiltinFunction) -> None:
+
+        self.fn = fn
+
+    
+    def type(self) -> ObjectType:
+        return ObjectType.BUILTIN
+
+
+    def inspect(self) -> str:
+        return "builtin function"
